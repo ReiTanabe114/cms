@@ -1,93 +1,73 @@
 <?php
-  session_start();
-  include 'includes/config.php';
-  include 'includes/functions.php';
-  
-  $error = '';
-  
-  // Check if user is already logged in
-  if(isset($_SESSION['user_id'])) {
-    header("Location: index.php");
-    exit();
-  }
-  
-  // Process login form
-  if($_SERVER['REQUEST_METHOD'] == 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+require_once 'includes/config.php';
+require_once 'includes/functions.php';
+
+$error = '';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
     
-    // Validate input
-    if(empty($username) || empty($password)) {
-      $error = "Please enter both username and password";
-    } else {
-      // Check credentials against database
-      $sql = "SELECT id, username, password FROM users WHERE username = ?";
-      $stmt = $conn->prepare($sql);
-      $stmt->bind_param("s", $username);
-      $stmt->execute();
-      $result = $stmt->get_result();
-      
-      if($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
+    // Hardcoded credentials
+    $valid_username = 'admin';
+    $valid_password = 'password123';
+    
+    if ($username === $valid_username && $password === $valid_password) {
+        // Start session and set user as logged in
+        session_start();
+        $_SESSION['user_logged_in'] = true;
+        $_SESSION['username'] = $username;
         
-        // Verify password
-        if(password_verify($password, $user['password'])) {
-          // Set session variables
-          $_SESSION['user_id'] = $user['id'];
-          $_SESSION['username'] = $user['username'];
-          
-          // Redirect to dashboard
-          header("Location: index.php");
-          exit();
-        } else {
-          $error = "Invalid username or password";
-        }
-      } else {
-        $error = "Invalid username or password";
-      }
+        // Redirect to dashboard
+        header('Location: index.php');
+        exit;
+    } else {
+        $error = 'Invalid username or password';
     }
-  }
+}
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login - School Website CMS</title>
-  <link rel="stylesheet" href="css/styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Website CMS - Login</title>
+    <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <div class="login-container">
-    <div class="login-card">
-      <div class="login-header">
-        <div class="logo">S</div>
-        <h1>School Website CMS</h1>
-      </div>
-      
-      <?php if(!empty($error)): ?>
-        <div class="alert alert-error">
-          <?php echo $error; ?>
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo-container">
+                    <div class="logo">S</div>
+                    <h1>School CMS</h1>
+                </div>
+                <p>Sign in to manage your school website</p>
+            </div>
+            
+            <?php if ($error): ?>
+                <div class="error-message"><?php echo $error; ?></div>
+            <?php endif; ?>
+            
+            <form method="POST" action="login.php" class="login-form">
+                <div class="form-group">
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="password" name="password" required>
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-block">Sign In</button>
+            </form>
+            
+            <div class="login-footer">
+                <p>Default credentials: admin / password123</p>
+            </div>
         </div>
-      <?php endif; ?>
-      
-      <form method="POST" action="login.php" class="login-form">
-        <div class="form-group">
-          <label for="username">Username</label>
-          <input type="text" id="username" name="username" required>
-        </div>
-        
-        <div class="form-group">
-          <label for="password">Password</label>
-          <input type="password" id="password" name="password" required>
-        </div>
-        
-        <button type="submit" class="btn btn-primary btn-block">Login</button>
-      </form>
-      
-      <div class="login-footer">
-        <p>Don't have an account? Contact your administrator.</p>
-      </div>
     </div>
-  </div>
 </body>
 </html>

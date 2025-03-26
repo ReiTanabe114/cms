@@ -248,6 +248,34 @@ function updateElementPositions() {
   });
 }
 
+// Function to switch tabs
+function switchTab(tabId) {
+  // Update URL with the tab parameter
+  const url = new URL(window.location.href);
+  url.searchParams.set("tab", tabId);
+  window.history.pushState({}, "", url);
+
+  // Update active tab button
+  const tabButtons = document.querySelectorAll(".tab");
+  tabButtons.forEach((button) => {
+    if (button.getAttribute("data-tab") === tabId) {
+      button.classList.add("active");
+    } else {
+      button.classList.remove("active");
+    }
+  });
+
+  // Update active tab pane
+  const tabPanes = document.querySelectorAll(".tab-pane");
+  tabPanes.forEach((pane) => {
+    if (pane.id === tabId + "-tab") {
+      pane.classList.add("active");
+    } else {
+      pane.classList.remove("active");
+    }
+  });
+}
+
 // Initialize the CMS when the page loads
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize drag and drop
@@ -259,6 +287,23 @@ document.addEventListener("DOMContentLoaded", function () {
     button.addEventListener("click", function () {
       const tabId = this.getAttribute("data-tab");
       switchTab(tabId);
+    });
+  });
+
+  // Add event listeners for sidebar navigation
+  const navItems = document.querySelectorAll(".sidebar-nav .nav-item");
+  navItems.forEach((item) => {
+    item.addEventListener("click", function (e) {
+      // Prevent default only if it's not a link to another page
+      if (!this.getAttribute("href") || this.getAttribute("href") === "#") {
+        e.preventDefault();
+      }
+
+      // Remove active class from all nav items
+      navItems.forEach((navItem) => navItem.classList.remove("active"));
+
+      // Add active class to clicked item
+      this.classList.add("active");
     });
   });
 });

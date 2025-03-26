@@ -1,31 +1,49 @@
 <?php
-  // Database configuration
-  $db_host = 'localhost';
-  $db_user = 'root';
-  $db_pass = '';
-  $db_name = 'school_cms';
-  
-  // Create database connection
-  $conn = new mysqli($db_host, $db_user, $db_pass, $db_name);
-  
-  // Check connection
-  if($conn->connect_error) {
+// Database configuration
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'school_cms');
+
+// Start session if not already started
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+// Check if user is logged in
+function is_logged_in() {
+    return isset($_SESSION['user_logged_in']) && $_SESSION['user_logged_in'] === true;
+}
+
+// Redirect if not logged in
+function require_login() {
+    if (!is_logged_in()) {
+        header('Location: login.php');
+        exit;
+    }
+}
+
+// Create database connection
+$conn = new mysqli(DB_HOST, DB_USER, DB_PASS, DB_NAME);
+
+// Check connection
+if($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
-  }
-  
-  // Set character set
-  $conn->set_charset("utf8mb4");
-  
-  // Website configuration
-  define('SITE_NAME', 'School Website CMS');
-  define('SITE_URL', 'http://localhost/school-cms');
-  
-  // Error reporting
-  error_reporting(E_ALL);
-  ini_set('display_errors', 1);
-  
-  // Create tables if they don't exist
-  function createTablesIfNotExist() {
+}
+
+// Set character set
+$conn->set_charset("utf8mb4");
+
+// Website configuration
+define('SITE_NAME', 'School Website CMS');
+define('SITE_URL', 'http://localhost/school-cms');
+
+// Error reporting
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
+// Create tables if they don't exist
+function createTablesIfNotExist() {
     global $conn;
     
     // Landing page elements table
@@ -119,8 +137,8 @@
     if ($result->num_rows == 0) {
       $conn->query("INSERT INTO contact_info (address, city, state, zip_code, main_phone, alternate_phone, fax, email, website) VALUES ('123 School Street', 'Anytown', 'State', '12345', '(555) 123-4567', '', '', 'info@schoolname.edu', 'www.schoolname.edu')");
     }
-  }
-  
-  // Create tables when the file is included
-  createTablesIfNotExist();
+}
+
+// Create tables when the file is included
+createTablesIfNotExist();
 ?>
