@@ -276,6 +276,30 @@ function switchTab(tabId) {
   });
 }
 
+// Function to open preview modal
+function openPreviewModal() {
+  const modal = document.getElementById("previewModal");
+  if (modal) {
+    modal.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+}
+
+// Function to close preview modal
+function closePreviewModal() {
+  const modal = document.getElementById("previewModal");
+  if (modal) {
+    modal.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+}
+
+// Function to approve and publish website
+function approveAndPublish() {
+  alert("Website published successfully!");
+  closePreviewModal();
+}
+
 // Initialize the CMS when the page loads
 document.addEventListener("DOMContentLoaded", function () {
   // Initialize drag and drop
@@ -305,5 +329,11 @@ document.addEventListener("DOMContentLoaded", function () {
       // Add active class to clicked item
       this.classList.add("active");
     });
+  });
+
+  // Add event listeners for preview buttons
+  const previewButtons = document.querySelectorAll(".btn-preview");
+  previewButtons.forEach((button) => {
+    button.addEventListener("click", openPreviewModal);
   });
 });

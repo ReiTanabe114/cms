@@ -36,8 +36,11 @@ $recent_activities = [
                 <h1>School CMS</h1>
             </div>
             <div class="header-actions">
-                <span>Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? 'User'); ?></span>
-                <a href="logout.php" class="btn btn-outline">Sign Out</a>
+                <span>Welcome, <?php echo htmlspecialchars($_SESSION['username'] ?? 'Admin'); ?></span>
+                <a href="logout.php" class="btn btn-outline">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>Sign Out</span>
+                </a>
             </div>
         </header>
         
@@ -78,7 +81,7 @@ $recent_activities = [
                                 </div>
                                 <div class="activity-details">
                                     <div class="activity-text">
-                                        <?php echo $activity['type']; ?> <?php echo $activity['section']; ?>
+                                        <?php echo ucfirst($activity['type']); ?> <?php echo $activity['section']; ?>
                                     </div>
                                     <div class="activity-time"><?php echo $activity['time']; ?></div>
                                 </div>
@@ -169,9 +172,11 @@ $recent_activities = [
             </div>
             <div class="modal-footer">
                 <button class="btn btn-outline" onclick="closePreviewModal()">
+                    <i class="fas fa-arrow-left"></i>
                     <span>Return to Editor</span>
                 </button>
                 <button class="btn btn-primary" onclick="approveAndPublish()">
+                    <i class="fas fa-check"></i>
                     <span>Approve & Publish</span>
                 </button>
             </div>
